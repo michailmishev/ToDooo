@@ -18,7 +18,7 @@ class TableViewController: UITableViewController {
     }
 
     
-    //MARK - Tableview Datasource Methods
+    //MARK - TableView Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
@@ -34,6 +34,25 @@ class TableViewController: UITableViewController {
         cell.textLabel?.text = itemArray[indexPath.row]
         
         return cell
+        
+    }
+    
+    
+    
+    //MARK - TableView Delegate Method
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        print(itemArray[indexPath.row])
+        
+        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
+           tableView.cellForRow(at: indexPath)?.accessoryType  = .none
+        } else {
+           tableView.cellForRow(at: indexPath)?.accessoryType  = .checkmark
+        }
+        
+        //the grey background diaspear after select it:
+        tableView.deselectRow(at: indexPath, animated: true)
         
     }
     
