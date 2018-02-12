@@ -12,10 +12,14 @@ class TableViewController: UITableViewController {
 
     var itemArray = [Item]()
     
-    let defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    
+//    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        print(dataFilePath)
         
         let newItem = Item()
         newItem.title = "Buy Milk"
@@ -29,33 +33,12 @@ class TableViewController: UITableViewController {
         newItem3.title = "Make New App"
         itemArray.append(newItem3)
         
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
-//        itemArray.append(newItem3)
         
-        if let items = defaults.array(forKey: "ToDoListArray") as? [Item] {
-            itemArray = items
-        }
+        loadItems()
+        
         
     }
-
+ 
     
     //MARK - TableView Datasource Methods
     
@@ -112,7 +95,9 @@ class TableViewController: UITableViewController {
 //        }
 
         
-        tableView.reloadData()
+        saveItems()
+        
+        
         
         //the grey background diaspear after select it:
         tableView.deselectRow(at: indexPath, animated: true)
@@ -137,9 +122,7 @@ class TableViewController: UITableViewController {
             newItem.title = textField.text!
             self.itemArray.append(newItem)
             
-            self.defaults.set(self.itemArray, forKey: "ToDoListArray")
-            
-            self.tableView.reloadData()
+           self.saveItems()
             
         }
         
@@ -154,8 +137,54 @@ class TableViewController: UITableViewController {
         
     }
     
+    
+    
+    
+    
+    //MARK - Model Manipulation Methods
+    
+    func saveItems() {
+        
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error Encoding Item Array: \(error)")
+        }
+        
+        self.tableView.reloadData()
+        
+    }
+    
+    
+    func loadItems() {
+        
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            let decoder = PropertyListDecoder()
+            do {
+                itemArray = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error Decoding Item Array: \(error)")
+            }
+        }
+        
+    }
+    
+    
 
 }
+
+
+
+
+
+
+
+
+
+
 
 
 
